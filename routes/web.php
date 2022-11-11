@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ListingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Listing;
@@ -16,23 +17,24 @@ use App\Models\Listing;
 |
 */
 
+// NAMING CONVENTIONS
+// Common Resource Routes: 
+// index - show all listings 
+// show - show single listing 
+// create - show form to create new listing 
+// store - store new listings 
+// edit - show form to edit listings
+// destroy - delete listing
+
+
 
 //all listings
-Route::get('/', function () {
-    return view('listings', [
-        'heading' => "Latest listings",
-        'listings' => Listing::all()
-    ]);
-});
+Route::get('/', [ListingController::class, 'index']); /* we want that slash to go to the listing controller and the index method, 
+so we can pass in [ListingController::class, 'index'] , the method is 'index' */ 
 
 
 
 
 //single listing
-Route::get('/listings/{listing}', function (Listing
-$listing) {
-    return view('listing', [
-        'listing' => $listing
-    ]);
-});
-
+Route::get('/listings/{listing}', [ListingController::class, 'show']); //show is the index method here
+//{listing} is the id of the listing, thus when you click on it it will show you details of the listing with that id

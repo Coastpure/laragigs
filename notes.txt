@@ -146,4 +146,178 @@ on the top add
 then the listings code below 
 then on listings.blade.php, add  <x-listing-card :listing="$listing" /> under @foreach($listings as $listing)
 
-1:40:00:
+to create a card, make a new file card.blade.php
+add 
+<div {{$attributes->merge(['class' => 'bg-gray-50 border border-gray-200 rounded p-6']) }} >
+{{$slot}}
+
+
+
+CONTROLLERS 
+php artisan make:controller ListingController
+it will create a new Listing controller
+
+controller is connected with the routes
+we move the web.php functionality, which is in the routes into a controller
+
+NAMING CONVENTIONS
+Common Resource Routes: 
+index - show all listings 
+show - show single listing 
+create - show form to create new listing 
+store - store new listings 
+edit - show form to edit listings
+destroy - delete listing
+
+make a new folder in views called listings move listings.blade and listing.blade there 
+rename them to index and show
+then on controllers change return to listings.index and listings.index to acces the files
+
+MAKING THE LAYOUT BE A COMPONENT
+make the layout page a component 
+move it to components folder 
+and {{$slot}} where yield was, then to call it wrap it around other components with <x-layout>
+
+
+FILTERING 
+TAGS FILTERING
+filter posts that have only that tag in them
+
+scope filter
+In listingcontroller
+use the dd function in the controller
+
+Method 1 - Dependancy Injection
+add (Request $request) in public function and to be public function index (Request $request)
+dd($request); below it
+
+click on laravel tag, it will show requests, you will see tag = laravel in 
++query: Symfony\Component\HttpFoundation\InputBag {#51 ▼
+    #parameters: array:1 [▼
+      "tag" => "laravel"
+
+
+Method 2 - Helper
+there is a request helper, we dont need to pass Request $request in, delete them and remove $ in dd($request)
+its gonna be a function, make it dd(request())
+when you reload it will show the same output
+
+you can choose any method you want, we are going to use the second one
+
+now we know how to get our request
+To get the actual tag
+
+Method 1
+dd(request()->tag); 
+when you reload you'll only see the laravel name
+
+Method 2 
+dd(request('tag')); 
+it will show the same thing i both cases we are adding tag
+
+in our model, i.e Listing.php create a function 
+public function scopeFilter() {}
+it's going to take in a query
+
+in listingcontroller, remove all() in return, then add 
+'listings' => Listing::latest()->get()  //here the page will sort by the latest
+remove the dd(request('tag')); line
+
+to do the filtering
+add filter(request('tag'))
+'listings' => Listing::latest()->filter(request('tag'))->get()
+and that will get passed in as filters from, listing.php 
+it has to be an array as indicated on listing.php, so ad square brackets ['tag']
+it now becomes  'listings' => Listing::latest()->filter(request(['tag']))->get()
+
+in listing php, add dd 
+dd($filters['tag']);
+when you reload you will see laravel, like we were seeing before
+lets chck for this by adding if, to make sure it happens if only there is a tag
+
+we use the Null coalescing operator i.e   ??
+if($filters['tag'] ?? false ) {}
+difference between iteneary operator and null coalescing is that ernary Operator checks whether the value is true,
+  but Null coalescing operator checks if the value is not null
+In this case, if it is not false move on, if there is a tag, do what is inside, if not it wont do anything 
+
+lets take that query that we have 
+query->where(); 
+this is like an sql like query, we want to look in the tags column in the database, so 'tags', 'like'
+the request/tag that comes in we want, anything can be before or after it, and that is represented by a % sign
+then we are going to concantinate it . request('tag') whatevet the request tag is, which is tag
+and then concantinate and put another % sign after it . '%', we finally have 
+
+ $query->where('tags', 'like', '%' . request('tag') . '%' );
+it's going to search whatever that tag is in the tags column in the database table
+the tags column is the first 'tag', it is going o search for tha tag using request('tag')
+and if it matches, that will get returned
+
+to test change some tags in the databse, if you click on one tag, it will filter
+
+In the controller it will be 
+'listings' => Listing::latest()->filter(request(['tag',]))->get()
+
+In the model it will be 
+ public function scopeFilter($query, array $filters) {
+$query->where('tags', 'like', '%' . request('tag') . '%' );  }
+
+
+
+
+
+
+SEARCH FILTER
+
+add a scope filter to the current one
+make sure the search button has name, name="search", because it's what is showing in the address bar when u click it
+and it's going to be a get request by default, we dont have to specify it
+in our controller, in addition to tag we can pass in search i.e 
+'listings' => Listing::latest()->filter(request(['tag', 'search']))->get()
+
+and then in our model, where we have our scope filter, copy the if statement
+if($filters['search'] ?? false ) , put search
+then choose where we are going to search from, we want it to search from title, so 
+$query->where('title', 'like', '%' . request('search') . '%' )   //search coz that's what we are matching
+
+so search in another field add another query, eg if we want to search from title, under that we put 
+->orWhere('description', 'like', '%' . request('search') . '%' ) 
+to search from tags 
+->orWhere('tags', 'like', '%' . request('search') . '%' ); 
+
+in the controller it will be 
+'listings' => Listing::latest()->filter(request(['tag', 'search']))->get()
+
+in the model it will be 
+if($filters['search'] ?? false ) {
+            $query->where('title', 'like', '%' . request('search') . '%' )
+            ->orWhere('description', 'like', '%' . request('search') . '%' ) 
+            ->orWhere('tags', 'like', '%' . request('search') . '%' ); 
+
+
+
+The search filter overall will be: 
+
+In controller 
+public function index() {    
+        return view('listings.index', [ 
+             'listings' => Listing::latest()->filter(request(['tag', 'search']))->get()
+             //above, we are sorting by the latest instead of a random order in all()
+        ]);
+    }
+
+In model it will be 
+
+public function scopeFilter($query, array $filters) {
+
+        if($filters['tag'] ?? false ) {
+            $query->where('tags', 'like', '%' . request('tag') . '%' ); 
+        }
+        if($filters['search'] ?? false ) {
+            $query->where('title', 'like', '%' . request('search') . '%' )
+            ->orWhere('description', 'like', '%' . request('search') . '%' ) 
+            ->orWhere('tags', 'like', '%' . request('search') . '%' ); 
+        }
+
+
+2:01:00

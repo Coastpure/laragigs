@@ -25,8 +25,10 @@
                 },
             };
         </script>
-        <title>LaraGigs | Find Laravel Jobs & Projects</title>
+        <title>LaraGigs Title</title>
     </head>
+
+    <!--navbar-->
     <body class="mb-48">
         <nav class="flex justify-between items-center mb-4">
             <a href="/"
@@ -47,10 +49,14 @@
             </ul>
         </nav>
 
+       <!--main page content -- content has HERO, SEARCH and LISTINGS--> 
         <main>
-    @yield('content')
+            {{$slot}} <!--we wanna wrap it around something, this slot contains the main body,
+            i.e everything other than nav and the footer we use it instead of yield-->
         </main>
 
+
+      <!--footer-->  
         <footer
             class="fixed bottom-0 left-0 w-full flex items-center justify-start font-bold bg-laravel text-white h-16 mt-24 opacity-90 md:justify-center"
         >

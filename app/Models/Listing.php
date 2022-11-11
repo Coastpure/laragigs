@@ -8,4 +8,25 @@ use Illuminate\Database\Eloquent\Model;
 class Listing extends Model
 {
     use HasFactory;
+
+    public function scopeFilter($query, array $filters) { //will enable us to filter on controllers
+
+        //filter by query
+        if($filters['tag'] ?? false ) {
+            //choose where we want to filter from
+            $query->where('tags', 'like', '%' . request('tag') . '%' ); 
+            //above, it's going to search whatever that tag is in, in the tags column in the database table
+        }
+
+
+        //filter by search
+        if($filters['search'] ?? false ) {
+            //choose where we want to search from
+            $query->where('title', 'like', '%' . request('search') . '%' )
+            ->orWhere('description', 'like', '%' . request('search') . '%' ) 
+            ->orWhere('tags', 'like', '%' . request('search') . '%' ); 
+            //add we input search because thats what we are matching
+            //above, it's going to search whatever that tag is in the tags column in the database table
+        }
+    }
 }

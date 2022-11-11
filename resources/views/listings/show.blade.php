@@ -1,8 +1,6 @@
 <!-- Single Listing -->
+<x-layout> <!--it comes from layout.blade.php, because it is now a component-->
 
-@extends('layout')
-
-@section('content')
 @include('partials._search')
 
 
@@ -10,7 +8,8 @@
 ><i class="fa-solid fa-arrow-left"></i> Back
 </a>
 <div class="mx-4">
-<x-card class="p-10">
+<x-card class="p-10 bg-indigo-300"> <!--we added attributes in card.blade.php to add classes like here 
+    added more padding + another color-->
     <div
         class="flex flex-col items-center justify-center text-center"
     >
@@ -23,7 +22,7 @@
         <h3 class="text-2xl mb-2">{{$listing->title}}</h3>
         <div class="text-xl font-bold mb-4">{{$listing->company}}</div>
 
-        <x-listing-tags :tagsCsv="$listing->tags" />
+        <x-listing-tags :tagsCsv="$listing->tags" /> <!-- this is the listing tags component, we have also put it on listings.blade.php-->
             
         <div class="text-lg my-4">
             <i class="fa-solid fa-location-dot"></i> {{$listing->location}}
@@ -56,4 +55,4 @@
 </x-card>
 </div>
 
-@endsection
+</x-layout>
