@@ -38,6 +38,11 @@ so we can pass in [ListingController::class, 'index'] , the method is 'index' */
 //show Create form
 Route::get('/listings/create', [ListingController::class, 'create']); 
 
+//store listing data
+Route::post('/listings', [ListingController::class, 'store']);
+
+
+
 
 //single listing
 Route::get('/listings/{listing}', [ListingController::class, 'show']); 

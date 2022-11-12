@@ -9,6 +9,11 @@ class Listing extends Model
 {
     use HasFactory;
 
+
+    //Mass assignment method 1
+    //protected $fillable = ['title', 'company', 'location', 'website', 'email', 'description', 'tags'];
+
+
     public function scopeFilter($query, array $filters) { //will enable us to filter on controllers
 
         //filter by query
