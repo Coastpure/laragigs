@@ -52,7 +52,8 @@
        <!--main page content -- content has HERO, SEARCH and LISTINGS--> 
         <main>
             {{$slot}} <!--we wanna wrap it around something, this slot contains the main body,
-            i.e everything other than nav and the footer we use it instead of yield-->
+            i.e everything other than nav and the footer we use it instead of yield
+            we will wrap it as x-layout x/layout -->
         </main>
 
 
@@ -63,7 +64,7 @@
             <p class="ml-2">Copyright &copy; 2022, All Rights reserved</p>
 
             <a
-                href="create.html"
+                href="/listings/create"
                 class="absolute top-1/3 right-10 bg-black text-white py-2 px-5"
                 >Post Job</a
             >

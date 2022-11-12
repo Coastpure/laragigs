@@ -1,0 +1,50 @@
+CLOCKWORK PACKAGE 
+
+download chrome clockwork extenstion
+run, composer require itsgoingd/clockwork
+
+when you open clockwork extenstion it shows GET / ListingController@index 4ms
+i.e get request controller method time
+
+check on database tab it will show
+Listing	
+Listing	
+SELECT * FROM `listings` ORDER BY `created_at` DESC
+
+if you click on laravel on web page, database section of extension will show 
+SELECT * FROM `listings` WHERE `tags` like '%laravel%' ORDER BY `created_at` DESC
+
+CREATE LISTING FORM
+
+we'll create a new route, a new controller method and a new view
+on route, add 
+Route::get('/listings/create', [ListingController::class, 'create']); 
+
+on controller, add 
+  public function create() {
+        return view('listings.create');
+    }
+
+create a new file in views, listings  name it create.blade.php
+in the post job button in footer, put the href to be 
+href="/listings/create"   i.e the same directory in the route  Route::get('/listings/create')
+
+make sure Route::get('/listings/{listing}', [ListingController::class, 'show']); is below the create one
+because when you click on create it will look at the one that is above
+
+go to create.html to paste the form code
+paste the selected code 
+
+you have to wrap it in the layouts component for the styles to show which are defined in the layout.blade file
+i.e <x-layout> <x/layout>
+
+remove the card div which we already have at card.blade
+then wrap x-card /x-card around it too, to display it
+
+read on max width tailwind i.e max-w-lg, it's what makes that card thin and into
+
+
+VALIDATION AND STORE LISTING 
+
+we now want to store new listings
+

@@ -1,4 +1,4 @@
-<!--this is a card component that wraps around whatever we want-->
+<!--this is a card component that wraps around whatever we want we wrap is as x-card /xcard -->
 
 
 <!-- this is the backgroung where a single listing is contained in the listings where image, description, tags, location is contained, 

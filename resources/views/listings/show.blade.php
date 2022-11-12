@@ -9,7 +9,8 @@
 </a>
 <div class="mx-4">
 <x-card class="p-10 bg-indigo-300"> <!--we added attributes in card.blade.php to add classes like here 
-    added more padding + another color-->
+    added more padding + another color card file name is card.blade.php, its also the same 
+    card used in listing-card.blade.php to put the photo, description, tags and location in it-->
     <div
         class="flex flex-col items-center justify-center text-center"
     >
