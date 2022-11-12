@@ -47,4 +47,78 @@ read on max width tailwind i.e max-w-lg, it's what makes that card thin and into
 VALIDATION AND STORE LISTING 
 
 we now want to store new listings
+make sure every field has a name i.e in create.blade, because thats how we can access the data in the form
+we want the form to submit to listings i.e <form action="/listings">
+but we want it to be a post request, so add POST, <form method="POST" action="/listings">
 
+we have a directive in laravel @csrf, it prevents cross site scripting attacks, add it below
+
+lets go to routes and create our store route
+this time its going to be a post request
+Route::post('/listings', [ListingController::class, 'store']);
+so we are submitting the form to /listings route 
+and its going to call the store method which we will now create
+
+  public function store() {}
+
+  add dd to check like last time 
+  public function store(Request $request) {
+        dd($request->all()); }
+  if you click create gig website will show form created, remove the dd after checking
+
+  For validation -checks if the information provided by a user is correct
+  $formFields = $request->validate([
+        'title' => 'required',    this part is to set rules we want 
+ As you can see, the validation rules are passed into the validate method
+
+ $formFields = $request->validate([    //we can use any name we want in place of $formfields
+        'title' => 'required',
+        'company' => ['required', Rule::unique('listings', 'company')], //make company name unique
+        'location' => 'required',
+        'website' => 'required',
+        'email' => ['required', 'email'],  //has to be formatted as an email
+        'tags' => 'required',
+        'description' => 'required',
+       ]);
+
+under the rules add 
+ return redirect('/');
+
+to show the user an error when validation fails we can use @error directive 
+in the views, under each form field, add an error message
+@error('company')       //has to coincide with the name="company"
+    <div class="alert alert-danger">{{ $message }}</div>
+@enderror
+
+add it under every input box
+when a user fails the validation, it will generate an automatic error message 
+The company field is required.
+
+To have the form created in the database, in the controller;
+we take our model and use create, we pass in $formfields which will contain our data
+Listing::create($formFields);
+when you input data and click submit it will show an error: 
+Add [title] to fillable property to allow mass assignment on [App\Models\Listing].
+
+
+MASS ASSIGNMENT
+
+in order to put add fields in a database they have to be put in a fillable property in a model
+
+Method 1
+go to the model file and add the fillable property i.e listing.php
+under hasFactory add protected $fillable = ,
+we want to set it to an array and allow any properties which we wanna do mass asignment to
+so we add them  protected $fillable = ['title', 'company', 'location', 'website', 'email', 'description', 'tags'];
+now reload, you will see what you have input on the homepage
+
+Method 2
+serach for AppServiceProvider file  i.e by using ctrl + p
+in the boot funtion, add Model::unguard();
+by this we are allowing the mass assignment and we no longer need to require us to add the fillable
+i.e protected $fillable = ['title', 'company', 'location', 'website', 'email', 'description', 'tags'];
+if you add another listing it will still work
+if you are going to use this method make sure you are aware of what's going into the database
+and you have it set up correcly e.g  Listing::create($request->all()); instead of  Listing::create($formFields);
+
+2:27:00
