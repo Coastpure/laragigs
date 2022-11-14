@@ -20,6 +20,7 @@
                                 class="border border-gray-200 rounded p-2 w-full"
                                 name="company"/>
 
+                                {{--validation, i.e the error message when an input is empty or wrong--}}
                                 @error('company')
                                     <div class="text-red-500 text-xs mt-1">{{ $message }}</div>
                                 @enderror

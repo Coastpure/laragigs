@@ -68,6 +68,8 @@ Install database if you dont have, for me I have
 create a new database name = laragigs, hostname = localhost, 
 password = password, username = simon 
 
+Don
+
 make migration 
 php artisan make:migration create_listings_table
 
@@ -180,6 +182,8 @@ and {{$slot}} where yield was, then to call it wrap it around other components w
 
 
 FILTERING 
+
+
 TAGS FILTERING
 filter posts that have only that tag in them
 
@@ -220,8 +224,10 @@ public function scopeFilter() {}
 it's going to take in a query
 
 in listingcontroller, remove all() in return, then add 
-'listings' => Listing::latest()->get()  //here the page will sort by the latest
+'listings' => Listing::latest()->get()  //here the page will sort by the latest instead of randomly
 remove the dd(request('tag')); line
+
+
 
 to do the filtering
 add filter(request('tag'))
@@ -233,7 +239,7 @@ it now becomes  'listings' => Listing::latest()->filter(request(['tag']))->get()
 in listing php, add dd 
 dd($filters['tag']);
 when you reload you will see laravel, like we were seeing before
-lets chck for this by adding if, to make sure it happens if only there is a tag
+lets check for this by adding if, to make sure it happens if only there is a tag
 
 we use the Null coalescing operator i.e   ??
 if($filters['tag'] ?? false ) {}
@@ -270,7 +276,7 @@ $query->where('tags', 'like', '%' . request('tag') . '%' );  }
 SEARCH FILTER
 
 add a scope filter to the current one
-make sure the search button has name, name="search", because it's what is showing in the address bar when u click it
+make sure the search button in views has name, name="search", because it's what is showing in the address bar when u click it
 and it's going to be a get request by default, we dont have to specify it
 in our controller, in addition to tag we can pass in search i.e 
 'listings' => Listing::latest()->filter(request(['tag', 'search']))->get()
@@ -280,7 +286,7 @@ if($filters['search'] ?? false ) , put search
 then choose where we are going to search from, we want it to search from title, so 
 $query->where('title', 'like', '%' . request('search') . '%' )   //search coz that's what we are matching
 
-so search in another field add another query, eg if we want to search from title, under that we put 
+to search in another field add another query, eg if we want to search from description, under that we put 
 ->orWhere('description', 'like', '%' . request('search') . '%' ) 
 to search from tags 
 ->orWhere('tags', 'like', '%' . request('search') . '%' ); 

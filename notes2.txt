@@ -113,12 +113,56 @@ so we add them  protected $fillable = ['title', 'company', 'location', 'website'
 now reload, you will see what you have input on the homepage
 
 Method 2
-serach for AppServiceProvider file  i.e by using ctrl + p
+search for AppServiceProvider file  i.e by using ctrl + p
 in the boot funtion, add Model::unguard();
+public function boot()
+    {
+        Model::unguard();
+    }
 by this we are allowing the mass assignment and we no longer need to require us to add the fillable
 i.e protected $fillable = ['title', 'company', 'location', 'website', 'email', 'description', 'tags'];
 if you add another listing it will still work
 if you are going to use this method make sure you are aware of what's going into the database
 and you have it set up correcly e.g  Listing::create($request->all()); instead of  Listing::create($formFields);
 
-2:27:00
+
+
+
+FLASH MESSAGE
+
+show message when new listing is created
+
+on return redirect('/'); add with i.e  return redirect('/')->with('message', 'Listing created succesfully!');
+//the name message can be anything you want eg alert, error, success etc
+
+we now need in our view to show the message, we make it a component and create flash-message.blade.php
+check for the message we use if 
+@if(session()->has('message')), that message word has to be similar as one put in LIstingController
+
+then style it 
+@if(session()->has('message'))
+    <div class="fixed top-0 left-1/2 transform -translate-x-1/2 bg-laravel text-white px-48 py-3">
+        <p>
+            {{session('message')}} //this displays the message
+        </p>
+
+    </div>
+@endif
+
+we then need to put it in the layout, add <x-flash-message />
+doesnt matter where we place it because position is fixed
+when you create a listing it will show there until you reload, to remove it we can use alpine js
+open https://alpinejs.dev/, copy the src, <script src="//unpkg.com/alpinejs" defer></script>
+paste it to our layout page
+
+to the flash message div, add x-data="{show: true}"
+then we want it to show for a certain amount of time the dissapear, theres an attribute called x-init
+basically when it initializes we want to run set timeout x-init="setTimeout(() => show = false)
+we have made an arrow function, but we dont pass anything in there, then it takes in a second parameter
+which is the number of milliseconds we want it to show so we add 3000 after false
+then we add an x-show make it equal or set it to the show value i.e x-show="show"
+
+after 3 seconds that show will turn into false and since we have x-show equal to that value, the message will dissapear
+aftercreating a listing, it will show for 3 seconds then dissapear
+
+2:36:32

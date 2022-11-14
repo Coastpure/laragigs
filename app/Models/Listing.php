@@ -14,9 +14,11 @@ class Listing extends Model
     //protected $fillable = ['title', 'company', 'location', 'website', 'email', 'description', 'tags'];
 
 
+
+    //FILTERING
     public function scopeFilter($query, array $filters) { //will enable us to filter on controllers
 
-        //filter by query
+        //filter by query i.e tag
         if($filters['tag'] ?? false ) {
             //choose where we want to filter from
             $query->where('tags', 'like', '%' . request('tag') . '%' ); 
@@ -30,6 +32,7 @@ class Listing extends Model
             $query->where('title', 'like', '%' . request('search') . '%' )
             ->orWhere('description', 'like', '%' . request('search') . '%' ) 
             ->orWhere('tags', 'like', '%' . request('search') . '%' ); 
+            
             //add we input search because thats what we are matching
             //above, it's going to search whatever that tag is in the tags column in the database table
         }
