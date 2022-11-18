@@ -16,7 +16,7 @@ class Listing extends Model
 
 
     //FILTERING
-    public function scopeFilter($query, array $filters) { //will enable us to filter on controllers
+    public function scopeFilter($query, array $filters) { //will enable us to filter from controllers
 
         //filter by query i.e tag
         if($filters['tag'] ?? false ) {

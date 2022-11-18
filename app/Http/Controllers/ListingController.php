@@ -10,12 +10,12 @@ class ListingController extends Controller
 {
 
     //show all listings
-    public function index() {    
+    public function index() {
         return view('listings.index', [ //return index file in a folder called listings
 
 
-            'listings' => Listing::latest()->filter(request(['tag', 'search']))->get()
-             //above, we are sorting by the latest instead of a random order in all()
+            'listings' => Listing::latest()->filter(request(['tag', 'search']))->paginate(6)
+             //above, we are sorting by the latest instead of a random order by using all()
         ]);
     }
 
@@ -33,8 +33,9 @@ class ListingController extends Controller
         return view('listings.create');
     }
 
-    //Store Listing Data
+    //Store Listing Data                  listing data is submitted here
     public function store(Request $request) {
+        //Validate
        $formFields = $request->validate([
         'title' => 'required',
         'company' => ['required', Rule::unique('listings', 'company')], //make company name unique
@@ -44,6 +45,13 @@ class ListingController extends Controller
         'tags' => 'required',
         'description' => 'required',
        ]);
+
+
+       if($request->hasFile('logo')) {
+        $formFields['logo'] = $request->file('logo')->store('logos', 'public');
+       }
+
+
 
        Listing::create($formFields);
 

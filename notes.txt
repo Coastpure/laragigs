@@ -217,7 +217,7 @@ when you reload you'll only see the laravel name
 
 Method 2 
 dd(request('tag')); 
-it will show the same thing i both cases we are adding tag
+it will show the same thing in both cases we are adding tag
 
 in our model, i.e Listing.php create a function 
 public function scopeFilter() {}
@@ -230,10 +230,10 @@ remove the dd(request('tag')); line
 
 
 to do the filtering
-add filter(request('tag'))
+add filter(request('tag')) in ListingController
 'listings' => Listing::latest()->filter(request('tag'))->get()
 and that will get passed in as filters from, listing.php 
-it has to be an array as indicated on listing.php, so ad square brackets ['tag']
+it has to be an array as indicated on listing.php, so add square brackets ['tag']
 it now becomes  'listings' => Listing::latest()->filter(request(['tag']))->get()
 
 in listing php, add dd 
@@ -251,12 +251,12 @@ lets take that query that we have
 query->where(); 
 this is like an sql like query, we want to look in the tags column in the database, so 'tags', 'like'
 the request/tag that comes in we want, anything can be before or after it, and that is represented by a % sign
-then we are going to concantinate it . request('tag') whatevet the request tag is, which is tag
+then we are going to concantinate it . request('tag') whatever the request tag is, which is tag
 and then concantinate and put another % sign after it . '%', we finally have 
 
  $query->where('tags', 'like', '%' . request('tag') . '%' );
 it's going to search whatever that tag is in the tags column in the database table
-the tags column is the first 'tag', it is going o search for tha tag using request('tag')
+the tags column is the first 'tag', it is going to search for the tag using request('tag')
 and if it matches, that will get returned
 
 to test change some tags in the databse, if you click on one tag, it will filter

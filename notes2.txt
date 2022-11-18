@@ -165,4 +165,104 @@ then we add an x-show make it equal or set it to the show value i.e x-show="show
 after 3 seconds that show will turn into false and since we have x-show equal to that value, the message will dissapear
 aftercreating a listing, it will show for 3 seconds then dissapear
 
-2:36:32
+
+KEEP OLD DATA IN FORM 
+
+Data should remain in field even after you get the validation error
+in create.blade, we go to the in put and add 
+ value="{{old('company')}} , use the old helper then pass in 'company' which is the field
+ if you fill in only company field and submit, the text eill remain and you'l get an error in the other fields
+ paste for the other fields making sure to match the field with the name
+
+ for description we just add {{old('description')}} in the text area field because it is a text area and we dont wanna use a value
+
+ PAGINATION
+
+ if you have like 100 listings you dont want al of them appearing in the page
+
+ go to listingcontroller, to the index section
+
+ 'listings' => Listing::latest()->filter(request(['tag', 'search']))->get(), change the last get to paginate()
+ 'listings' => Listing::latest()->filter(request(['tag', 'search']))->paginate(), if you reload its going to remain the same
+
+ paginate is going to take in a number, and that is going to be the number we want per page, we put 2 for now to test: paginate(2)
+ if you reload only 2 listings will show
+ if you want you may test using dd i.e Above return view add dd(Listing::latest()->filter(request(['tag', 'search']))->paginate(2));   .... reload the page and you will see the perPage and currentPage, thats from using paginate
+
+ now we need a way to go to the next page, if you paste http://laragigs.test/?page=2 on the url you will see = page 2
+ go to indexblade, under the last div name a new one i.e <div class="mt-6 p-4"></div>
+ inside it add 
+ <div class="mt-6 p-4">
+    {{$listings->links()}}
+</div>
+
+and thats it, if you reload page, at the bottom you will see 'showing 1 to 2 of 10 results' and the clickable bar with numbers
+if you dont want to show the numbers change paginate() to simplePaginate() in the controller, it will only show next and previous
+
+the next or number bar is looking good for us because it uses tailwind by default and we are also using it
+we cant directly style it, if you wanna style it run php artisan vendor:publish
+
+it gives you many options, for our case we look for paginate 
+Provider: Illuminate\Pagination\PaginationServiceProvider ......... 5 , we type 5 cuz its fifth 
+it then makes a new folder vendor/paginate  and some files
+the default we are using is tailwind.blade.php 
+to change the template, search for appservice provider, in boot we add 
+Paginator::useBootstrapFive(); and it will use the bootstrap template
+
+FILE UPLOAD
+
+go to create.blade and uncomment the image div, make sure type = file,    type="file" add error message i.e
+@error('logo')
+<div class="text-red-500 text-xs mt-1">{{ $message }}</div>
+@enderror
+
+whenever you have a file input you have to add an attribute to the form, at the very beggining of the form,
+ add enctype="multipart/form-data"
+i.e             <form method="POST" action="/listings" enctype="multipart/form-data">
+
+now go to controller, where the form is submitted to i.e  public function store
+add a dd to check i.e public function store(Request $request) {
+        dd($request->file('logo')); 
+it will show file name, size, type etc, 
+to store it there is a method called store, by default they will go to public folder 
+open filesystems.php in config folder there are different disks we can use and the default is local
+for local, the location will be 'root' => storage_path('app'), location will be that storage folder and then that app folder
+if you want your images to be public,you will put them in the storage app public folder i.e  'root' => storage_path('app/public'),
+
+now we will change the default from local to public, change the first line to 
+'default' => env('FILESYSTEM_DISK', 'public'),
+we need a field in the database for the path 
+go to the database then migration folder, open create listing table , and we wanna add another filed there
+and we can keep it as a sctring because we are only storing the file path, we dont actually store the image
+the file and the database is just a path to the file
+add a nullable i.e $table->string('logo')->nullable(); 
+this means if it doesnt have an image its just fine
+
+run php artisan migrate:refresh --seed 
+its going to refresh database and get rid of the listings we added from the web page 
+check the database, we now havee anew field of logo which all the sample data is null
+now we just need to get the images uploaded to the folder, and we weed to say that path needs to go to the db
+
+under form validate, type
+if($request->hasFile('logo')) {
+        $formFields['logo'] = $request->file('logo')->store('logos', 'public');
+ }
+
+ then add a new listing and upload file,
+ if you chech storatge > public folder a new folder called logos will have been created, also the image you uploaded
+ on database, the new listing will have been creatded and a path to the image too
+ now this isnt publicly accessible yet, we need to create a simlink from this storage public folder to the public folder, and we do that by adding a simple artisan command
+ php artisan storage:link, it then says 
+  [C:\Users\hp\Documents\Software Development\Laravel\laravel_projects\laragigs\public\storage] link has been connected to [C:\Users\hp\Documents\Software Development\Laravel\laravel_projects\laragigs\storage\app/public].  
+
+  for the imaage to show, we need to make changes to the card and the single listings page
+  we also need to show the no-logo image when a user has not uploaded an image 
+  in listing-card.blade, go to the image src and type 
+    src="{{$listing->logo ?    asset('storage/' . $listing->logo)    :     asset('/images/no-image.png')}}"
+notice we have a tineary operator to say if image is not uploaded, show no-image image
+
+
+2:57:00
+
+
+EDIT LISTING
