@@ -243,7 +243,7 @@ lets check for this by adding if, to make sure it happens if only there is a tag
 
 we use the Null coalescing operator i.e   ??
 if($filters['tag'] ?? false ) {}
-difference between iteneary operator and null coalescing is that ernary Operator checks whether the value is true,
+difference between iteneary operator and null coalescing is that tiniery Operator checks whether the value is true,
   but Null coalescing operator checks if the value is not null
 In this case, if it is not false move on, if there is a tag, do what is inside, if not it wont do anything 
 

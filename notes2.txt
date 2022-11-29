@@ -131,6 +131,7 @@ and you have it set up correcly e.g  Listing::create($request->all()); instead o
 FLASH MESSAGE
 
 show message when new listing is created
+read more about redirects here https://laravel.com/docs/9.x/redirects
 
 on return redirect('/'); add with i.e  return redirect('/')->with('message', 'Listing created succesfully!');
 //the name message can be anything you want eg alert, error, success etc
@@ -166,6 +167,10 @@ after 3 seconds that show will turn into false and since we have x-show equal to
 aftercreating a listing, it will show for 3 seconds then dissapear
 
 
+
+
+
+
 KEEP OLD DATA IN FORM 
 
 Data should remain in field even after you get the validation error
@@ -175,6 +180,10 @@ in create.blade, we go to the in put and add
  paste for the other fields making sure to match the field with the name
 
  for description we just add {{old('description')}} in the text area field because it is a text area and we dont wanna use a value
+
+
+
+
 
  PAGINATION
 
@@ -208,6 +217,10 @@ it then makes a new folder vendor/paginate  and some files
 the default we are using is tailwind.blade.php 
 to change the template, search for appservice provider, in boot we add 
 Paginator::useBootstrapFive(); and it will use the bootstrap template
+
+
+
+
 
 FILE UPLOAD
 
@@ -249,7 +262,8 @@ if($request->hasFile('logo')) {
  }
 
  then add a new listing and upload file,
- if you chech storatge > public folder a new folder called logos will have been created, also the image you uploaded
+ if you chech storage > public folder a new folder called logos will have been created, also the image you uploaded
+
  on database, the new listing will have been creatded and a path to the image too
  now this isnt publicly accessible yet, we need to create a simlink from this storage public folder to the public folder, and we do that by adding a simple artisan command
  php artisan storage:link, it then says 
@@ -262,7 +276,75 @@ if($request->hasFile('logo')) {
 notice we have a tineary operator to say if image is not uploaded, show no-image image
 
 
-2:57:00
 
 
 EDIT LISTING
+
+Add a new route in web.php 
+Route::get('/listings/{listing}/edit', [ListingController::class, 'edit']);
+/listings is the end point that we want, {listing} is the route model binding
+in [ListingController::class, 'edit'], edit is the method we want 
+
+create the edit link
+for now we will put an edit delete button at the show page
+add an x-card and some classes i.e <x-card class="mt-4 p-2 flex space-x-6"> 
+and then an a tag that will go to /listings/ and the the listing id, then edit i.e 
+<a href="/listings/{{$listing->id}}/edit"></a>
+then add a pencil icon i.e <i class="fa-solid fa-pencil"></i> Edit
+
+if you click on it now it will say the controller method doesnt exist, so lets create that
+in a listing controller 
+make a public function called edit, it's gonna take in a Listing with a Variable name Listing i.e public function edit(Listing $listing)
+then we are going to return view, lets return listings.edit which we haven't created yet
+and then we are going to pass in the listing itself i.e listing => $listing which is going to come from $listing in the above line
+
+add a die dump to check if it's hooked up 
+dd($listing);
+to check a specific thing like title, dd($listing->title);
+now remove the dd, now looks like this 
+  public function edit(Listing $listing)
+       {
+        return view('listings.edit', ['listing' => $listing] );
+       }
+
+
+
+create a new file in Views>listings, name it edit.blade.php
+copy the whole create form and paste that in
+edit some parts, edit post.... to <p class="mb-4">Edit: {{$listing->title}}</p> to have the original title there
+for the form the action will be /listings/ the id     i.e action="/listings/{{listing->id}}
+
+also we want the method to be put, but here we only have an option of get and post, but laravel gives us a directive called method
+under @csrf, add @method('PUT') , then it will get sent as a put
+
+we want the form to be pre-filled so instead of the old, 
+we are going to have the listing and then whatever the field is, do that to all fields
+value="{{$listing->company}}"/>  
+
+for the logo we are going to show the current image
+so under input, we'll copy the image from the show
+i.e    <img
+            class="w-48 mr-6 mb-6"
+            src="{{$listing->logo ? asset('storage/' . $listing->logo) : asset('/images/no-image.png')}}"
+            alt=""
+        />
+
+
+in order to submit this we need to have another route
+this will be a put rout, not get
+path will be /listings/{listing} and then listing controller and the method will be update i.e 
+update method because remember we are following the naming conventions
+Route::put('/listings/{listing}', [ListingController::class, 'update']);
+
+now we have to create that method so let's go to our controller 
+copy the store function
+change store to update, i.e  public function update(Request $request, Listing $listing) {
+
+then remove the rule in validate  i.e
+Rule::unique('listings', 'company')], 
+because if you try to submit same company again it will get activated and we might not update the company name
+
+then we need to change Listing::create($formFields); because we are not creating anew listing
+so instead of using a static method like there it's  going to be 
+$listing->create($formFields);
+for the message instead of redirecting to the homepage, we can return back so that we can redirect the user to their previous location, read more on it here https://laravel.com/docs/9.x/redirects

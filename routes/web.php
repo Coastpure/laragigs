@@ -24,24 +24,31 @@ use App\Models\Listing;
 // create - show form to create new listing 
 // store - store new listings 
 // edit - show form to edit listings
+//update - Update listing
 // destroy - delete listing
 
 
 
-//all listings
+//All Listings
 Route::get('/', [ListingController::class, 'index']); 
 /* we want that slash to go to the listing controller and the index method, 
 so we can pass in [ListingController::class, 'index'] , the method is 'index' */ 
 //in the controller, we will put it as  return view('listings.index',)
 
 
-//show Create form
+//Show Create Form
 Route::get('/listings/create', [ListingController::class, 'create']); 
 
-//store listing data
+//Store Listing Data
 Route::post('/listings', [ListingController::class, 'store']);
 
 
+//Show Edit Form
+Route::get('/listings/{listing}/edit', [ListingController::class, 'edit']);
+
+
+//Update listing
+Route::put('/listings/{listing}', [ListingController::class, 'update']);
 
 
 //single listing

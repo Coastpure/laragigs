@@ -33,7 +33,8 @@ class ListingController extends Controller
         return view('listings.create');
     }
 
-    //Store Listing Data                  listing data is submitted here
+
+    //Store and save Listing Data          listing data is submitted here
     public function store(Request $request) {
         //Validate
        $formFields = $request->validate([
@@ -46,17 +47,55 @@ class ListingController extends Controller
         'description' => 'required',
        ]);
 
-
+       //upload logo image
        if($request->hasFile('logo')) {
         $formFields['logo'] = $request->file('logo')->store('logos', 'public');
        }
 
-
-
+        //this is the action of this function
        Listing::create($formFields);
 
 
+       //Notification message that appears when new listing is created
        return redirect('/')->with('message', 'Listing created succesfully!');
+
+    }
+
+
+
+       //Show Edit Form
+       public function edit(Listing $listing)
+       {
+        return view('listings.edit', ['listing' => $listing] );
+       }
+
+
+
+        //Update listing data
+       public function update(Request $request, Listing $listing) {
+        //Validate
+       $formFields = $request->validate([
+        'title' => 'required',
+        'company' => ['required',],
+        'location' => 'required',
+        'website' => 'required',
+        'email' => ['required', 'email'],  //has to be formatted as an email
+        'tags' => 'required',
+        'description' => 'required',
+       ]);
+
+       //logo
+       if($request->hasFile('logo')) {
+        $formFields['logo'] = $request->file('logo')->update('logos', 'public');
+       }
+
+        //this is the action of this function, we want it to update the listing
+       $listing->update($formFields);
+
+
+       //here we use back to redirect the user to their previous location
+       return back()->with('message', 'Listing updated succesfully!');
+
     }
 
 }
