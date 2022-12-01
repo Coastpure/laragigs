@@ -1,0 +1,50 @@
+USER REGISTRATION 
+
+we'll start off in out routes web.php
+the endoint will be /register, then we'll have a users controller which we don't have yet and the method we'll use will be create, you can call it anyhow eg register, but it's better to stick with the naming conventions
+so it will be 
+N/B i changed it to register to avoid confusion
+Route::get('/register', [UserController::class, 'register']);
+
+then we'll create a new controller with 
+php artisan make:controller UserController
+
+then import class 
+use App\Http\Controllers\UserController;
+
+then let's go to our layout tochange the link for the register to be a href="/register"
+do same for login
+a href="/login"
+if you click on it it will say create does not exist, so we'll go to our user controller 
+
+make a new fuction to show register form 
+public function register() {
+        return view('users.register');
+}
+
+create a new folder in the views call it users 
+then a new file called register.blade
+
+then add the layout component
+<x-layout>
+    the register page code
+</x-layout>
+that is why it is good to make the layout a component because it is easy to add it to a new page
+then copy the register form html, or you can also copy the one we used for create listing and paste it within the layout
+
+then add the card component we have been using to wrap around the firm i.e card.blade.php 
+<x-card class='p-10 max-w-lg mx-auto mt-24'> //here we add unique classes for this form's card
+ // the form code
+<x-card/>
+
+form action will be /users method will be post, make sure the inputs have a name i.e name="email"
+
+then for validation errors we are going to do like we did in the create listing part, under input: 
+ @error('name')
+<p class="text-red-500 text-xs mt-1">{{$message}}</p>
+ @enderror
+
+ then below at already have an account? change the href to 
+ a href="/login"
+
+ 3:20:00

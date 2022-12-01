@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\ListingController;
+use App\Models\Listing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\Listing;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ListingController;
 
 
 /*
@@ -29,7 +30,7 @@ use App\Models\Listing;
 
 
 
-//All Listings
+//Show All Listings
 Route::get('/', [ListingController::class, 'index']); 
 /* we want that slash to go to the listing controller and the index method, 
 so we can pass in [ListingController::class, 'index'] , the method is 'index' */ 
@@ -50,8 +51,15 @@ Route::get('/listings/{listing}/edit', [ListingController::class, 'edit']);
 //Update listing
 Route::put('/listings/{listing}', [ListingController::class, 'update']);
 
+//Delete listing
+Route::delete('/listings/{listing}', [ListingController::class, 'destroy']);
+
 
 //single listing
 Route::get('/listings/{listing}', [ListingController::class, 'show']); 
 //show is the index method here, in the controler it will be put as return view('listings.show')
 //{listing} is the id of the listing, thus when you click on it it will show you details of the listing with that id
+
+
+//Show Register Form
+Route::get('/register', [UserController::class, 'register']);

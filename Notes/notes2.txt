@@ -1,3 +1,5 @@
+CLOCKWORK PACKAGE - DELETE LISTING
+
 CLOCKWORK PACKAGE 
 
 download chrome clockwork extenstion
@@ -348,3 +350,53 @@ then we need to change Listing::create($formFields); because we are not creating
 so instead of using a static method like there it's  going to be 
 $listing->create($formFields);
 for the message instead of redirecting to the homepage, we can return back so that we can redirect the user to their previous location, read more on it here https://laravel.com/docs/9.x/redirects
+
+
+DELETE LISTING 
+To delete a model, you may call the delete method
+here we are using Deleting An Existing Model By Its Primary Key
+read more on
+https://laravel.com/docs/9.x/eloquent#deleting-models
+
+For the delete, its going to be a form in the show.blade becoz we're not just navigating to a page, we're seubmitting the delete request
+so we are going to create a form and use the method directive and use the type of delete
+so make a form, the action will be listings/ then the id and method will be post, 
+however we wanna add two directives @csrf and 
+@method('DELETE'), ultimately this will make a delete request, so it will look like 
+
+<form method='POST' action="/listings/{{$listing->id}}">
+        @csrf
+        @method('DELETE')       
+</form>
+
+
+now make the delete button
+<button class="text-red-500"> <i class="fa-solid fa-trash"></i> Delete</button> 
+when clicked, it's going to submit to /listings/{{$listing->id}} 
+finally it will look like 
+
+<form method="POST" action="/listings/{{$listing->id}}">
+        @csrf
+        @method('DELETE')       
+        <button class="text-red-500"> <i class="fa-solid fa-trash"></i> Delete</button>
+</form>
+
+on routes make a new line i.e 
+
+//Delete listing
+Route::delete('/listings/{listing}', [ListingController::class, 'destroy']);
+
+then on controllers we need to add the destroy method, make a new function 
+ public function destroy(Listing $listing) { 
+
+}
+//doesnt have to be destroy, we're just sticking to the naming convention
+
+all we have to to, is take that listing and just call delete 
+ $listing->delete();
+ and then we'll redirect, and add a flash message, so it looks like
+
+ public function destroy(Listing $listing) {
+        $listing->delete();
+        return redirect('/')->with('message', 'Listing deleted succesfully');
+}

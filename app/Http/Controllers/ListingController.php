@@ -95,7 +95,12 @@ class ListingController extends Controller
 
        //here we use back to redirect the user to their previous location
        return back()->with('message', 'Listing updated succesfully!');
+    }
 
+    //Delete Listing
+    public function destroy(Listing $listing) {
+        $listing->delete();
+        return redirect('/')->with('message', 'Listing deleted succesfully');
     }
 
 }
