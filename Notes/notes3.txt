@@ -44,7 +44,66 @@ then for validation errors we are going to do like we did in the create listing 
 <p class="text-red-500 text-xs mt-1">{{$message}}</p>
  @enderror
 
- then below at already have an account? change the href to 
+ then below, at already have an account? change the href to 
  a href="/login"
 
- 3:20:00
+
+REGISTER USER SUBMISSION
+so now we wanna handle the actual submission, we know it's a post request to /users
+so lets's handle that in our routes, in web.php make a new route 
+
+Route::post('/users', [UserController::class, 'store']);
+//store is our method here, you can name it how you want
+
+we make a new controller, we make it the same way we made storing listing data to stay consistent i.e 
+public function store(Request $request)
+
+
+PASWORD VALIDATION
+then we wanna do VALIDATION
+for name we wanna have at least 3 characters:
+'name' => ['required', 'min:3'],
+for email we wanna make it unique and has to email syntax: 
+'email' => ['required', 'email', Rule::unique('users', 'email')],
+
+for password because we want the password to be confirmed it's going to be 
+['required ,confirmed,']
+so what this does it it makes sure to match another field called whatever this fiels is i.e 'password'
+remember in our confirm password field we gave it a name='password_confirmation'
+you wanna stick to that convention is you want that confirmed
+and we also want to give it a minimum of 6 characters, so it becomes 
+'password' => ['required ,confirmed, min:6']
+
+
+HASHING PASSWORD
+of course, you wanna hash your password, you never wanna save the password in plain text, we use Bcrypt
+all we do is take the form fields, password value, which is the plain text and set it to bcrypt  $formFields['password'] = bcrypt
+and pass in that exact field i.e bcrypt($formFields['password'])
+so we're just setting it to be the hashed password
+
+
+now the way that we are going to do this is create the user then automatically log in
+we are going to say $user = User:: User is our model and pass in the $formFields i.e 
+$user = User::create($formFields);
+that will create the user
+
+and then we want to log in, we can do it with the auth helper, and then we can call login and pass in the $user that was created
+auth()->login($user);
+
+then we just wanna redirect with succescul message i.e 
+return redirect('/')->with('mesage', 'User created and logged in');
+
+we are going to get an error when we press the sign up button, 
+so we'll change password validation to 
+'password' => 'required|confirmed|min:6'
+now it works
+
+Old helper to make data remain after validation error
+so we go to register.blade and after name add 
+value={{old('name)}} 
+note what is in the brackets has to match name i.e value={{old('password_confirmation')}}
+
+
+AUTH LINKS
+
+3:30:00

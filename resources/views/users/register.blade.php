@@ -1,5 +1,5 @@
 <x-layout>
-    <x-card class="p-10 max-w-lg mx-auto mt-24">
+    <x-card class="p-10 max-w-lg mx-auto mt-24 bg-orange-200">
                     <header class="text-center">
                         <h2 class="text-2xl font-bold uppercase mb-1">
                             Register
@@ -16,7 +16,7 @@
                             <input
                                 type="text"
                                 class="border border-gray-200 rounded p-2 w-full"
-                                name="name"
+                                name="name" value={{old('name')}}
                             />
 
                         {{--validation error message--}}
@@ -32,7 +32,7 @@
                             <input
                                 type="email"
                                 class="border border-gray-200 rounded p-2 w-full"
-                                name="email"
+                                name="email" value={{old('email')}}
                             />
 
                             @error('email')
@@ -50,7 +50,7 @@
                             <input
                                 type="password"
                                 class="border border-gray-200 rounded p-2 w-full"
-                                name="password"
+                                name="password" value={{old('password')}}
                             />
 
                             @error('password')
@@ -68,7 +68,7 @@
                             <input
                                 type="password"
                                 class="border border-gray-200 rounded p-2 w-full"
-                                name="password_confirmation"
+                                name="password_confirmation" value={{old('password_confirmation')}}
                             />
 
                             @error('password_confirmation')

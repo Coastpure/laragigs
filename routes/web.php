@@ -63,3 +63,7 @@ Route::get('/listings/{listing}', [ListingController::class, 'show']);
 
 //Show Register Form
 Route::get('/register', [UserController::class, 'register']);
+
+//Register new user
+Route::post('/users', [UserController::class, 'store']);
+//store is our method here, you can name it how you want
