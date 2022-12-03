@@ -106,4 +106,114 @@ note what is in the brackets has to match name i.e value={{old('password_confirm
 
 AUTH LINKS
 
-3:30:00
+We can use a directive called auth because we can wrap anything we want in auth and it will only show ifwe're logged in
+
+copy and paste this part below
+  <li>
+     <a href="/register" class="hover:text-laravel"
+                        ><i class="fa-solid fa-user-plus"></i> Register</a
+    >
+ </li>
+<li>
+    <a href="/login" class="hover:text-laravel"
+        ><i class="fa-solid fa-arrow-right-to-bracket"></i>
+        Login</a
+    >
+</li>
+
+now we have 4 <li></li> for the second one change Register to Manage listings, and href to "/listings/manage" which we will do later
+then change icon to gear icon
+
+it becomes 
+<li>
+     <a href="/listings/manage" class="hover:text-laravel"
+          ><i class="fa-solid fa-user-plus"></i> Manage Listings</a
+     >
+</li>
+
+then delete the contents in first li and make a span add auth after welcome
+use the auth helper then we can say user, and from this user we can get whatever field we want, lets get the name i.e 
+Welcome {{auth()->user()->name}}
+now we only want his shown if we're logged in so we'll go above the li and say @auth, then @else after the second li, then @endauth after the 4 LIs, and that's it
+
+so finally, it becomes 
+
+@auth
+                <li>
+                    <span class="font-bold uppercase">
+                        Welcome {{auth()->user()->name}}
+                    </span>
+                </li>
+                <li>
+                    <a href="/listings/manage" class="hover:text-laravel"
+                        ><i class="fa-solid fa-gear"></i>
+                        Manage Listings</a
+                    >
+                </li>
+
+                @else
+                <li>
+                    <a href="/register" class="hover:text-laravel"
+                        ><i class="fa-solid fa-user-plus"></i> Register</a
+                    >
+                </li>
+                <li>
+                    <a href="/login" class="hover:text-laravel"
+                        ><i class="fa-solid fa-arrow-right-to-bracket"></i>
+                        Login</a
+                    >
+                </li>
+@endauth
+
+when you register you will see Welcome Simon + Manage listings
+
+we need to add a logout link
+it's not going to be a link, it's going to be a form because it's going to be a post request
+make a new li before @else and a form inside it and then a button
+
+ <form class="inline" method="POST" action="/logout">
+ @csrf
+    <button type="submit">
+         <i class="fa-solid fa-door-closed"></i> Logout
+     </button>
+ </form>
+
+ now let's go to our routes and handle that, make a route with, give it a method called 'logout'
+ make sure it is post, the same with the form we are corresponding to
+
+ Route::post('/logout', [UserController::class, 'logout']);
+
+ now we'll create a logout in the controller
+
+ first off we wanna call auth
+ auth()->logout();
+ this willl remove the user authentication info from the user's session
+ it is recommended that we invalidate the user's session and and regenerate their token, their @csrf token
+ so to do that we can say 
+ $request->session()->invalidate();
+ and regenerate token as well
+ $request->session()->regenerate();
+
+ so the user will be logged out, so let's redirect
+
+ return redirect('/')->with('message', 'Logged out');
+
+ so the logout function will look like 
+
+ public function logout(Request $request)
+    {
+        auth()->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerate();
+
+        return redirect('/')->with('message', 'You have been logged out!');
+
+    }
+
+If you click logout you will get logged out and notice that the nav links have changed to register and log in
+
+
+USER LOGIN 
+
+3:37:29
