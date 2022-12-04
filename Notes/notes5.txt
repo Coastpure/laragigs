@@ -1,0 +1,78 @@
+AUTH AND GUEST MIDDLEWARE
+
+Here we want to make relationships between user and listings, I.e only a user can create a listing and delete it.
+
+only an authenticated user should click the post job and see the form 
+
+laravel has middlerare that makes this easy 
+we can simply go to routes, and lets say for the post job form,
+we only want authenticated users to see it, we can just put an arrow and then middleware,
+and then the middleware that we wanna use for that route which is auth
+middleware('auth')
+
+so it looks like 
+
+//Show Create Form
+Route::get('/listings/create', [ListingController::class, 'create'])->middleware('auth'); 
+
+when you click on post a job you will ge an error of
+Route [login] not defined.
+
+and we'll check where this middleware is 
+it's in app > http > middleware > authenticat.php
+
+it uses a function called redirectTo to redirect user to a route named login 
+ return route('login');
+
+ we haven't used names in our routes, adding names is simple 
+
+ and we go down to the show login form and we can call it login, ->name('login') i.e 
+
+//Show Login Form
+Route::get('/login',[UserController::class, 'login'])->name('login');
+
+now if we click on post job without being logged in, we get redirected to login
+
+you can edit that authenticate file to do what you want
+
+now let's add middleware to wherever we don't want a guest to access
+
+now add ->middleware('auth) to the other routes you only wants shown to a logged in user i.e 
+
+//Update listing
+Route::put('/listings/{listing}', [ListingController::class, 'update'])->middleware('auth');
+//Log User Out
+Route::post('/logout', [UserController::class, 'logout'])->middleware('auth');
+//Delete listing
+Route::delete('/listings/{listing}', [ListingController::class, 'destroy'])->middleware('auth');
+
+
+for others like register, log in, show all listings we'll leave them for guests to see i.e 
+Route::get('/', [ListingController::class, 'index']); 
+
+when you log in, the regiter and log in links do not show on page, but when you add 
+/register on adress bar, you will see the register form 
+
+so on the register form route we can add middleware and then pass in guest i.e 
+
+//Show Register Form
+Route::get('/register', [UserController::class, 'register'])->middleware('guest');
+
+we'll also add it on show log in form i.e 
+
+//Show Login Form
+Route::get('/login',[UserController::class, 'login'])->name('login')->middleware('guest');
+
+
+when you reload when logged in it will redirect you to /home because it thinks that is our home page but in our case we don't have /home
+
+we can change that in the route service provider
+look for this line 
+public const HOME = '/home'; 
+change it to 
+public const HOME = '/'; because that's our home
+
+now if you try to access /register you can get redirected to homepage 
+
+
+

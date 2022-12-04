@@ -38,21 +38,21 @@ so we can pass in [ListingController::class, 'index'] , the method is 'index' */
 
 
 //Show Create Form
-Route::get('/listings/create', [ListingController::class, 'create']); 
+Route::get('/listings/create', [ListingController::class, 'create'])->middleware('auth'); 
 
 //Store Listing Data
-Route::post('/listings', [ListingController::class, 'store']);
+Route::post('/listings', [ListingController::class, 'store'])->middleware('auth');
 
 
 //Show Edit Form
-Route::get('/listings/{listing}/edit', [ListingController::class, 'edit']);
+Route::get('/listings/{listing}/edit', [ListingController::class, 'edit'])->middleware('auth');
 
 
 //Update listing
-Route::put('/listings/{listing}', [ListingController::class, 'update']);
+Route::put('/listings/{listing}', [ListingController::class, 'update'])->middleware('auth');
 
 //Delete listing
-Route::delete('/listings/{listing}', [ListingController::class, 'destroy']);
+Route::delete('/listings/{listing}', [ListingController::class, 'destroy'])->middleware('auth');
 
 
 //single listing
@@ -62,11 +62,17 @@ Route::get('/listings/{listing}', [ListingController::class, 'show']);
 
 
 //Show Register Form
-Route::get('/register', [UserController::class, 'register']);
+Route::get('/register', [UserController::class, 'register'])->middleware('guest');
 
 //Register new user
 Route::post('/users', [UserController::class, 'store']);
 //store is our method here, you can name it how you want
 
 //Log User Out
-Route::post('/logout', [UserController::class, 'logout']);
+Route::post('/logout', [UserController::class, 'logout'])->middleware('auth');
+
+//Show Login Form
+Route::get('/login',[UserController::class, 'login'])->name('login')->middleware('guest');
+
+//Log In User
+Route::post('/users/authenticate',[UserController::class, 'authenticate']);

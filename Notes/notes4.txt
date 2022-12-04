@@ -1,0 +1,116 @@
+LOGIN 
+
+we need to create a login form, 
+we go to the routes and create a new one 
+
+Route::get('/login',[UserController::class, 'login']);
+
+and then make a new function in usercontroller 
+ public function login() {
+        return view('users.login');
+    }
+}
+
+we haven't created this view yet
+
+then create a new file login.blade.php to display the form
+
+for this we can copy the register form and paste it in because thery are similar
+
+so copy all from register.blade to login.blade
+
+edit <form method="POST" action="/users">
+
+it will still be a post requests and it's gonna go to
+login is different because it's not part of like crud functionality so we'll just say users
+login i.e
+edit <form method="POST" action="/users/authenticate">
+
+we don't need the name so we can just get rid of the name div
+we anly need the email and password, so we alsoneed to remove confirm pasword div
+
+change the last div to ask if user doesn't have an account and create one if they dont 
+
+<div class="mt-8">
+ <p>
+    Don't have an account?
+    <a href="/register" class="text-laravel"
+      >Register</a
+    >
+</p>
+</div>
+
+then make a new route, it will be a post and we'll call it '/users/authenticate'. make sure that name is the one in action''/users/authenticate'
+authenticate because we alsready have another one called login to avoid confusion
+Route::post('/users/authenticate'    ......finally it will become 
+
+Route::post('/users/authenticate',[UserController::class, 'authenticate']);
+
+make a new publicfunction in the Usercontroller 
+public function authenticate(Request $request)
+then copy validation from register's function and edit out what we don't need i.e 
+$formFields = $request->validate([
+           
+    'email' => ['required', 'email'],
+    'password' => 'required'
+]);
+ 
+
+ we need to attempt to log the user in so there's a methos called attempt
+ so it will go into an if statement, so we are going to say if(auth()->attempt())
+ and then we are going to pass in our $formfields i.e 
+
+ if(auth()->attempt($formFields))
+
+ if that is true then we wanna regenerate a session id, so lets take our requst object and say session and then regenerate i.e 
+
+  $request->session()->regenerate();
+
+  so it becomes 
+
+  if(auth()->attempt($formFields)){
+     $request->session()->regenerate();
+  }
+}
+
+  and then we'll go ahead and redirect the user and success login message shown
+  return redirect('/') ->with('message', 'You are now logged in');
+
+  if the login is unsuccesful, we'll return the user back withErrors
+  return back()->withErrors();
+
+  coz we already have the errors under the fields when validation fails, now if the login fails we just wanna say invalid credentials
+
+  we want errors on both because we don't wanna let an attacker know that password or email exists, so we show invalid on both
+
+  withErrors will take in an array and we wanna put it in the email field
+  ['email', "Invalid Credentials"]
+  and then we only want it to show in the email so we can say onlyInput and pass in the email 
+
+  onlyInput('email')     , so finally it becomes 
+
+  return back()->withErrors(['email' => "Invalid Credentials"])->onlyInput('email');
+
+  so the whole function looks like 
+
+  public function authenticate(Request $request)
+    {
+        $formFields = $request->validate([
+           
+            'email' => ['required', 'email'],
+            'password' => 'required'
+        ]);
+
+        if(auth()->attempt($formFields)){
+            $request->session()->regenerate();
+
+            return redirect('/') ->with('message', 'You are now logged in');
+            }   
+        
+        return back()->withErrors(['email' => "Invalid Credentials"])->onlyInput('email');
+
+    }
+
+
+
+now the user can log in with correct credentials

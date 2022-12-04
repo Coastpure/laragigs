@@ -1,3 +1,7 @@
+USER REGISTRATION - AUTH LINKS
+
+
+
 USER REGISTRATION 
 
 we'll start off in out routes web.php
@@ -44,6 +48,8 @@ then for validation errors we are going to do like we did in the create listing 
 <p class="text-red-500 text-xs mt-1">{{$message}}</p>
  @enderror
 
+
+
  then below, at already have an account? change the href to 
  a href="/login"
 
@@ -59,7 +65,7 @@ we make a new controller, we make it the same way we made storing listing data t
 public function store(Request $request)
 
 
-PASWORD VALIDATION
+VALIDATION
 then we wanna do VALIDATION
 for name we wanna have at least 3 characters:
 'name' => ['required', 'min:3'],
@@ -74,6 +80,15 @@ you wanna stick to that convention is you want that confirmed
 and we also want to give it a minimum of 6 characters, so it becomes 
 'password' => ['required ,confirmed, min:6']
 
+Remember like before we wanna let the data remein in the field is the user gets an error 
+so we add ole to value i.e value="{{old('email')}}" , so it becomes 
+
+<input
+    type="email"
+    class="border border-gray-200 rounded p-2 w-full"
+    name="email" value="{{old('email')}}"
+/>
+ 
 
 HASHING PASSWORD
 of course, you wanna hash your password, you never wanna save the password in plain text, we use Bcrypt
@@ -212,8 +227,3 @@ make a new li before @else and a form inside it and then a button
     }
 
 If you click logout you will get logged out and notice that the nav links have changed to register and log in
-
-
-USER LOGIN 
-
-3:37:29
