@@ -1,0 +1,152 @@
+RELATIONSHIPS 
+
+
+Create relationships between our listings and users
+make a listing belong to a user
+
+first off we need to handle the database
+
+in our database migration where we created the listings table 
+i.e create_listings_table.php
+we need to add another field for user ID so we can know which user created that listing
+so after table ID we gonna create a foreign key or fooreign id, so 
+
+$table->foreignId('');
+
+and then for the field lets say user_id 
+
+$table->foreignId('user_id');
+and then we'll make it constrained i.e $table->foreignId('user_id')->constrained();
+and then we'll also make it on delete we're are gonna pass in a cascade
+
+what that means is if we have a user that created a bunch of listings and then that user is deleted for some reasons, the listings will also cascade/delete i.e 
+
+$table->foreignId('user_id')->constrained()->onDelete('cascade');
+
+nothing is gonna hapen until we run our migrations
+
+in the database seeder i.e DatabaseSeeder.php 
+
+earlier we were only creating 5 users and 6 listings i.e 
+
+\App\Models\User::factory(5)->create();
+
+ Listing::factory(6)->create()
+
+ instead of that we're gonna have 1 user and have that user own all 6 listings
+ so we'll comment out \App\Models\User::factory(5)->create();
+
+ $user = User::factory()
+
+ we're gonna have a variable user set to user factory, the same thing that we did above, it's just that we're gonna create a single user
+ And since we're only doing user and not including  \App\Models, then we do have to import that in
+
+ now this will create one user but we do wanna take control of some of the fields like the name and the email
+ so we can add onto this, create 
+
+ $user = User::factory()->create()
+
+ and you can pass in an array of whatever field you wanna control
+
+ so it becomes 
+
+ $user = User::factory()->create([
+            'name'=> 'John Honest',
+            'email' => 'johnhonest@gmail.com'
+]);
+
+
+now down here when we create the listings, we're gonna pass in the user id coz that's what we wanna find and we're gonna define it as the user that was just created, we're are gonna define it as their id   i.e 
+
+Listing::factory(6)->create([
+            'user_id' => $user->id
+]);
+
+then let's go ahead and refresh and seed our database
+
+when you check the user on database, there is only 1
+and when you check the listings, there is anew field of user_id 1, so that user owns all these listings 
+
+
+Now we need to create a relationship within eloquent, within laravel 
+so we need to go into the model, 
+app>models>listing.php
+
+so here we need to define a relationship 
+so we create a function and call it user i.e public function user()
+and the relationship is gonna be belongs to because a listing belongs to a user, that's the type of relationship 
+so we'll say return and then $this, and then w're gonna use belongsTo()
+
+return $this->belongsTo()
+
+and we wanna tell it, what does this belong to
+
+so we'll say user::class and then the name of the field user_id
+
+return $this->belongsTo(User::class, 'user_id')
+
+'user_id' is not necessary because the defaulet we used was user_id 
+but in our migration if we used a different name like user_identifier then we would have had to specify 
+but we're gonna specify anyway
+
+all this is doing is saying that a listing, we're in the listing model, belongs to a user 
+and then 'user_id' is where that id is gonna be stored
+
+now we have to do the same thing on the user side, so 
+we goto the user model and create a function 
+
+public function listings()
+
+and the relationship will be has many 
+
+return $this->hasMany()
+
+and we can specify 'user_id' is the field in the database
+
+return $this->hasMany(Listing::class, 'user_id');
+
+so overall, when you look at Listing.php, we say listing belongs to a user 
+
+and then User.php, the user has many listings
+
+
+
+we can now easily get a user's listings or we can get the user of a specific listing
+
+we are gonna show that using a tool called tinker
+
+it is a command line tool that we can use to work with models, write queries, add things to the database etc
+
+run php artisan tinker
+
+run \App\Models\Listing::first()
+
+you'll see details of the first listings
+
+if you wanna find a specific listing you can do 
+
+App\Models\Listing::find(3)
+
+it returns the one with the id of 3
+
+we can take a particula listing, we wanna know the user, and we wanna get all the data of the user that owns it, we can run 
+
+App\Models\Listing::find(3)->user
+
+it's going to give us a specific user that owns that listing
+
+and if we have a user we can get all the listings of that user 
+
+$user = \App\Models\User::first()
+
+and run $user
+
+you can see the user 
+and is we wanna get the user's listings we can say 
+
+$user->listings 
+
+and it will show all their listings
+
+
+4:01:44

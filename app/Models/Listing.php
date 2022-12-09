@@ -37,4 +37,12 @@ class Listing extends Model
             //above, it's going to search whatever that tag is in the tags column in the database table
         }
     }
+
+    //Relatioship to user 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+
 }
