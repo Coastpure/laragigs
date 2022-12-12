@@ -1,0 +1,116 @@
+MANAGE LISTINGS PAGE
+
+It's gonna go to  http://laragigs.test/listings/manage
+
+so lets take care of that route 
+make a new route, has to be above //single listing
+
+//Manage Listings
+Route::get('/listings/manage', [ListingController::class, 'manage']);
+
+we want auth middleware on this, so guest doesn't get in
+
+Route::get('/listings/manage', [ListingController::class, 'manage'])->middleware(('auth'));
+
+
+let's go to listing controller and create a manage function
+
+public function manage() {
+        return view('listings.manage');
+ }
+
+ return 'listingd.manage' which we haven't created yet
+
+ we have to pass in the user's listings
+ we'll call it listings  
+
+ return view('listings.manage', ['listings' => ]);
+
+ and the way we can do this is where creating our relationships with eloquent comes in handy
+ we can do auth()->user()
+ what that does is give us a logged in user and then we can simply do ->listings()->get()
+ that should get all the currently logged in users listings and pass them in  to this view as 'listings' i.e 
+
+  return view('listings.manage', ['listings' => auth()->user()->listings()->get() ]);
+
+  now we need to create the view
+  create manage.blade.php file in listings
+
+  copy manage.html code and wrap  x-layout and x-card around it 
+
+  remove the hard coded parts
+
+  what we wanna do is loop through the listings, remember we're passing in the listings 
+  and only the listings that this logged in user has 
+
+  delete one <tr> coz we only need one to wrap the for each around 
+
+  above the tr add @unless ($listings->isEmpty())
+
+  we have an isEmpty method we can use 
+
+  then we are gonna loop through this, so foreach
+
+  @foreach ($listings as $listing)
+
+  and then end the for each after tr @endforeach
+
+  and then we'll do an  else 
+  @else
+  so if there isn't any we are gonna have a table row still
+
+  so add another tr to tell a user that no listing was found 
+
+  <tr class="border-gray-300">
+                    <td class="px-4 py-8 border-t border-b border-gray-300 text-lg">
+                        <p class="text-center">
+                            No Listings Found
+                        </p>
+                    </td>
+</tr>
+
+and then end unless after that      @endunless
+
+and then replace the hard coded part 
+
+<a href="show.html">
+    {{$listing->title}}
+</a>
+
+when you reload the title column will change to the one in the db
+
+the EDIT is gonna be a link to the edit we did before 
+
+<a href="/listings/{{$listing->id}}/edit">
+
+for the form too it will be the ame as the other delete 
+you can remove the edit and delete buttons in show.blade (see single listing), but for me I'll keep it
+  
+
+
+
+
+
+
+
+USER AUTHORIZATION
+
+  Now we only want the user to be able to delete their own post 
+
+  we are gonna go to listingcontroller, we are gonna go to where the user updates i.e 
+  public function update(Request $request, Listing $listing) {
+
+let's put this before the validation 
+
+we are gonna say if listing user id is not equal to auth, 
+->id() coz that's the logged in user id so if that's not equal then abort with a message of "Unauthorized" i.e 
+(403, "Unaothorized Action")    it's gonna looki like 
+
+if ($listing->user_id != auth()->id()) {
+            abort(403, "Unaothorized Action");
+}
+
+we are gonna do the same thing with the delete
+so copy it and paste it at delete function 
+
+it should be the first before any other line of code (before anything check if listing is of the logged in user)

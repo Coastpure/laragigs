@@ -1,0 +1,31 @@
+ADD OWNERSHIP TO LISTINGS 
+
+As of now when we submit the form, it doesn't let the database know which user that listing belongs to 
+
+we go to listingcontroller
+we just need to add to the database, uder upload image if
+
+and we want a user_id
+ $formFields['user_id'] =
+
+and we wanna set that to the user that is currently logged in that's submitting the form so we can use the auth helper
+$formFields['user_id'] = auth();
+
+and get the id from that 
+$formFields['user_id'] = auth()->id();
+
+and that should do it
+
+register a new account
+so create a new listing, check it on the database, the user_id will have been set to 2
+which is the id of the user we just created
+
+you can also tinker it 
+
+php artisan tinker
+
+\App\Models\User::find(2)->listings
+
+you will now see that listing from the user there 
+
+exit... to stop tinkering
