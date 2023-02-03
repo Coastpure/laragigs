@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Password;
 
 class UserController extends Controller
 {
@@ -54,23 +55,50 @@ class UserController extends Controller
         return view('users.login');
     }
 
-    //Authenticate User, this is when the iser is logging in
+    //Authenticate User, this is when the user is logging in
     public function authenticate(Request $request)
     {
         $formFields = $request->validate([
-           
+
             'email' => ['required', 'email'],
             'password' => 'required'
         ]);
 
-        if(auth()->attempt($formFields)){
+        if (auth()->attempt($formFields)) {
             $request->session()->regenerate();
 
-            return redirect('/') ->with('message', 'You are now logged in');
-            }   
-        
-        return back()->withErrors(['email' => "Invalid Credentials"])->onlyInput('email');
+            return redirect('/')->with('message', 'You are now logged in');
+        }
 
+        return back()->withErrors(['email' => "Invalid Credentials"])->onlyInput('email');
     }
 
+
+    //Show forgot Form
+    public function forgot()
+    {
+        return view('users.forgot');
+    }
+
+
+    //Password forgot handle form submission
+    public function forgotPassword(Request $request)
+    {
+        // validate input email
+        $request->validate(['email' => 'required|email']);
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with(['status' => __($status)])
+            : back()->withErrors(['email' => __($status)]);
+    }
+
+    //Show reset pass form
+    public function resetpass(Request $token)
+    {
+        return view('users.resetpass', ['token' => $token]);
+    }
 }

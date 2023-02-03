@@ -1,0 +1,50 @@
+PASSWORD RESET
+
+in login.blade.php  add forgot password? link 
+
+ <a href="/forgot" class="text-green-700 " >Forgot Password?</a>
+
+ create new route 
+
+ //Show Password forget form
+Route::get('/forgot',[UserController::class, 'forgot'])->middleware('guest');
+
+in the usecontroller, add 
+
+//Show forgot Form
+     public function forgot()
+     {
+         return view('users.forgot');
+     }
+
+then create file in views\users   name it forgot.blade.php
+
+then make the form, I just used the login form and modified it
+
+in App\Models\User, add a new line 
+
+use Illuminate\Contracts\Auth\CanResetPassword
+
+
+in web.php root file, add a new route 
+
+//Password Forget
+Route::post('/forgotPassword',  [UserController::class, 'forgotPassword'])->middleware('guest');
+
+in usercontroller, add a new function 
+
+public function forgotPassword(Request $request){
+        // validate input email
+        $request->validate(['email' => 'required|email']);
+ 
+    $status = Password::sendResetLink(
+        $request->only('email')
+    );
+
+    return $status === Password::RESET_LINK_SENT
+    ? back()->with(['status' => __($status)])
+    : back()->withErrors(['email' => __($status)]);
+
+now we make a form for reset password 
+
+use the one for 

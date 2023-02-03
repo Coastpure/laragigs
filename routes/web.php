@@ -3,6 +3,7 @@
 use App\Models\Listing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ListingController;
 
@@ -27,18 +28,19 @@ use App\Http\Controllers\ListingController;
 // edit - show form to edit listings
 //update - Update listing
 // destroy - delete listing
+//forgot - forgot password
 
 
 
 //Show All Listings
-Route::get('/', [ListingController::class, 'index']); 
+Route::get('/', [ListingController::class, 'index']);
 /* we want that slash to go to the listing controller and the index method, 
-so we can pass in [ListingController::class, 'index'] , the method is 'index' */ 
+so we can pass in [ListingController::class, 'index'] , the method is 'index' */
 //in the controller, we will put it as  return view('listings.index',)
 
 
-//Show Create Form
-Route::get('/listings/create', [ListingController::class, 'create'])->middleware('auth'); 
+//Show Create/post Form
+Route::get('/listings/create', [ListingController::class, 'create'])->middleware('auth');
 
 //Store Listing Data
 Route::post('/listings', [ListingController::class, 'store'])->middleware('auth');
@@ -59,7 +61,7 @@ Route::get('/listings/manage', [ListingController::class, 'manage'])->middleware
 
 
 //single listing
-Route::get('/listings/{listing}', [ListingController::class, 'show']); 
+Route::get('/listings/{listing}', [ListingController::class, 'show']);
 //show is the index method here, in the controler it will be put as return view('listings.show')
 //{listing} is the id of the listing, thus when you click on it it will show you details of the listing with that id
 
@@ -75,8 +77,17 @@ Route::post('/users', [UserController::class, 'store']);
 Route::post('/logout', [UserController::class, 'logout'])->middleware('auth');
 
 //Show Login Form
-Route::get('/login',[UserController::class, 'login'])->name('login')->middleware('guest');
+Route::get('/login', [UserController::class, 'login'])->name('login')->middleware('guest');
 
 //Log In User
-Route::post('/users/authenticate',[UserController::class, 'authenticate']);
+Route::post('/users/authenticate', [UserController::class, 'authenticate']);
 
+
+//Show Password forget form
+Route::get('/forgot', [UserController::class, 'forgot'])->middleware('guest');
+
+//Password Forgot handling
+Route::post('/forgotPassword',  [UserController::class, 'forgotPassword'])->middleware('guest');
+
+//Show password reset form
+Route::get('/resetpass', [UserController::class, 'resetpass'])->middleware('guest');

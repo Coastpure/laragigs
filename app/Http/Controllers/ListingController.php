@@ -78,7 +78,7 @@ class ListingController extends Controller
 
         //Make sure logged in user is owner 
         if ($listing->user_id != auth()->id()) {
-            abort(403, "Unaothorized Action");
+            abort(403, "Unauthorized Action");
         }
 
 
