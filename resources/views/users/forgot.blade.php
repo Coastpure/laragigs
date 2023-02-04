@@ -29,9 +29,10 @@
                                 type="submit"
                                 class="bg-laravel text-white rounded py-2 px-4 hover:bg-black"
                             >
-                                Send Login Link
+                                Send Reset Link
                             </button>
                             <a href="/resetpass">reset</a>
+                            {{-- "/listings/{{$listing->id}}/edit"        --}}
                         </div>
 
                         

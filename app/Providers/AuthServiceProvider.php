@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -21,10 +22,16 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @return void
      */
+
+     //reset link customization
     public function boot()
     {
         $this->registerPolicies();
 
-        //
+    
+        ResetPassword::createUrlUsing(function ($user, string $token) {
+            return 'http://laragigs.test/resetpass/'.$token;
+        });
     }
 }
+

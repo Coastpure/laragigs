@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Laravel\Sanctum\HasApiTokens;
+use App\Notifications\ResetPasswordNotification;
 
 class User extends Authenticatable
 {
@@ -48,4 +49,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Listing::class, 'user_id');
     }
+
+    use Notifiable;
+
+    // public function sendPasswordResetNotification($token)
+    // {
+
+    //     // $url = 'http://laragigs.test/resetpass?token='.$token;
+
+    //     $this->notify(new ResetPasswordNotification($token));
+    // }
 }

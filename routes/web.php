@@ -60,7 +60,7 @@ Route::delete('/listings/{listing}', [ListingController::class, 'destroy'])->mid
 Route::get('/listings/manage', [ListingController::class, 'manage'])->middleware('auth');
 
 
-//single listing
+//Show single listing
 Route::get('/listings/{listing}', [ListingController::class, 'show']);
 //show is the index method here, in the controler it will be put as return view('listings.show')
 //{listing} is the id of the listing, thus when you click on it it will show you details of the listing with that id
@@ -86,8 +86,17 @@ Route::post('/users/authenticate', [UserController::class, 'authenticate']);
 //Show Password forget form
 Route::get('/forgot', [UserController::class, 'forgot'])->middleware('guest');
 
-//Password Forgot handling
+//Password forgot send link form submit
 Route::post('/forgotPassword',  [UserController::class, 'forgotPassword'])->middleware('guest');
 
 //Show password reset form
-Route::get('/resetpass', [UserController::class, 'resetpass'])->middleware('guest');
+Route::get('/resetpass/{token}', [UserController::class, 'resetpassform'])->middleware('guest')->name('passreset.form');
+
+//Submit reset password form
+Route::post('/resetpass',  [UserController::class, 'resetpass'])->middleware('guest');
+
+
+// Route::get('forget-password', [ForgotPasswordController::class, 'showForgetPasswordForm'])->name('forget.password.get');
+// Route::post('forget-password', [ForgotPasswordController::class, 'submitForgetPasswordForm'])->name('forget.password.post'); 
+// Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('reset.password.get');
+// Route::post('reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->name('reset.password.post');

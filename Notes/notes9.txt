@@ -47,4 +47,79 @@ public function forgotPassword(Request $request){
 
 now we make a form for reset password 
 
-use the one for 
+use the one for send reset link form and edit it 
+
+make a new route 
+
+//Show password reset form
+Route::get('/resetpass', [UserController::class, 'resetpassform'])->middleware('guest');
+
+in users controller make a new function to show reset
+
+//Show reset pass form
+    public function resetpass(Request $token)
+    {
+        return view('users.resetpass', ['token' => $token]);
+    }
+
+make a new route for handling the reset
+
+//Reset password handling
+Route::post('/resetpass',  [UserController::class, 'resetpass'])->middleware('guest');
+
+then a new function in usercontroller 
+
+//Reset the password
+    public function resetpass(Request $request){
+          // validate the token, email and password
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+
+        /*If the token, email address, and password given to the password broker are valid, the closure passed to the reset method will be invoked.*/
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(Str::random(60));
+     
+                $user->save();
+     
+                event(new PasswordReset($user));
+            } 
+        );
+
+        return $status === Password::PASSWORD_RESET
+                ? redirect()->route('login')->with('status', __($status))
+                : back()->withErrors(['email' => [__($status)]]);
+
+    }
+
+
+Deleting expired tokens, you can use 
+
+php artisan auth:clear-resets
+or 
+$schedule->command('auth:clear-resets')->everyFifteenMinutes();  
+
+add the second line to console/kernel.php
+
+Customization
+
+then in App\Providers\AuthServiceProvider add 
+
+//Reset link customization
+    public function boot()
+    {
+         $this->registerPolicies();
+ 
+        ResetPassword::createUrlUsing(function ($user, string $token) {
+        return 'http://laragigs.test/resetpass?token='.$token;
+    });
+}
+
+
