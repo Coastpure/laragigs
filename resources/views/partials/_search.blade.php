@@ -1,5 +1,5 @@
 <form action="/">
-    <div class="relative border-2 border-gray-100 m-4 rounded-lg">
+    <div class="relative mt-4 mb-4 ml-72 rounded-lg w-[50%] space-x-2">
         <div class="absolute top-4 left-3">
             <i
                 class="fa fa-search text-gray-400 z-20 hover:text-gray-500"

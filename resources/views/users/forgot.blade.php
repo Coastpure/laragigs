@@ -31,8 +31,7 @@
                             >
                                 Send Reset Link
                             </button>
-                            <a href="/resetpass">reset</a>
-                            {{-- "/listings/{{$listing->id}}/edit"        --}}
+                            
                         </div>
 
                         
